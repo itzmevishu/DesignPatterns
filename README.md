@@ -16,7 +16,7 @@ Design patterns are well-established solutions to common problems in software de
 ## 1. Creational Design Patterns
 Creational patterns focus on object creation mechanisms, aiming to create objects in a manner suitable to the situation.
 
-- **Singleton**: Ensures a class has only one instance and provides a global access point to it.
+- [Singleton](#Singleton): Ensures a class has only one instance and provides a global access point to it.
 - **Factory Method**: Defines an interface for creating objects, allowing subclasses to alter the type.
 - **Abstract Factory**: Provides an interface for creating families of related or dependent objects.
 - **Builder**: Separates the construction of a complex object from its representation.
@@ -68,7 +68,7 @@ Design patterns serve as blueprints for building flexible, reusable, and reliabl
 
 ---
 
-# Singleton Pattern in Laravel
+## Singleton Pattern in Laravel
 
 The Singleton pattern is a **creational design pattern** that ensures a class has only one instance and provides a global point of access to that instance. This pattern is useful for resources like logging systems, configuration managers, or database connections, where only a single instance is needed across the application.
 
