@@ -5,18 +5,18 @@ Design patterns are well-established solutions to common problems in software de
 ---
 
 ## Table of Contents
-1. [Creational Design Patterns](#creational-design-patterns)
-2. [Structural Design Patterns](#structural-design-patterns)
-3. [Behavioral Design Patterns](#behavioral-design-patterns)
-4. [Benefits of Using Design Patterns](#benefits-of-using-design-patterns)
-5. [Conclusion](#conclusion)
+1. [Creational Design Patterns](#1-creational-design-patterns)
+2. [Structural Design Patterns](#2-structural-design-patterns)
+3. [Behavioral Design Patterns](#3-behavioral-design-patterns)
+4. [Benefits of Using Design Patterns](#4-benefits-of-using-design-patterns)
+5. [Conclusion](#5-conclusion)
 
 ---
 
 ## 1. Creational Design Patterns
 Creational patterns focus on object creation mechanisms, aiming to create objects in a manner suitable to the situation.
 
-- [Singleton](#Singleton): Ensures a class has only one instance and provides a global access point to it.
+- [Singleton](#Singleton-Pattern-in-Laravel): Ensures a class has only one instance and provides a global access point to it.
 - **Factory Method**: Defines an interface for creating objects, allowing subclasses to alter the type.
 - **Abstract Factory**: Provides an interface for creating families of related or dependent objects.
 - **Builder**: Separates the construction of a complex object from its representation.
