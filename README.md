@@ -68,4 +68,148 @@ Design patterns serve as blueprints for building flexible, reusable, and reliabl
 
 ---
 
-Happy coding!
+# Singleton Pattern in Laravel
+
+The Singleton pattern is a **creational design pattern** that ensures a class has only one instance and provides a global point of access to that instance. This pattern is useful for resources like logging systems, configuration managers, or database connections, where only a single instance is needed across the application.
+
+---
+
+## Key Features of Singleton Pattern
+1. **Single Instance**: Guarantees that only one instance of the class is created.
+2. **Global Access**: Provides a way to access this single instance from anywhere in the application.
+3. **Lazy Initialization**: The instance is created only when it is first needed.
+
+### When to Use Singleton Pattern
+- When exactly one instance of a class is required.
+- For classes that handle tasks like logging, configuration settings, or database connections.
+
+---
+
+## Singleton Pattern Implementation in Laravel
+
+### Method 1: Manual Implementation of Singleton in Laravel
+
+This example demonstrates creating a Singleton class for a Logger service.
+
+#### Step 1: Define the Singleton Class
+
+```php
+<?php
+
+namespace App\Services;
+
+class LoggerService
+{
+    // Holds the single instance of the LoggerService class
+    private static $instance = null;
+
+    // Make the constructor private to prevent instantiation
+    private function __construct()
+    {
+        // Initialize any resources here (e.g., open file, set up configuration)
+    }
+
+    // Prevent the instance from being cloned
+    private function __clone() {}
+
+    // Prevent unserializing the instance
+    private function __wakeup() {}
+
+    /**
+     * Get the Singleton instance of the LoggerService.
+     *
+     * @return LoggerService
+     */
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Log a message to a file or storage.
+     *
+     * @param string $message
+     */
+    public function log($message)
+    {
+        file_put_contents(storage_path('logs/custom.log'), $message . PHP_EOL, FILE_APPEND);
+    }
+}
+```
+**Explanation:** The LoggerService class has a private static property $instance that holds the single instance. A getInstance() method creates and returns the instance if it doesn’t already exist.
+
+Step 2: Using the Singleton Class in Laravel
+```
+use App\Services\LoggerService;
+
+class SomeController extends Controller
+{
+    public function logMessage()
+    {
+        $logger = LoggerService::getInstance();
+        $logger->log("This is a log message from the Singleton pattern.");
+    }
+}
+```
+**Method 2:** Using Laravel’s Service Container
+Laravel’s Service Container provides an easy way to register a class as a singleton using the singleton method.
+
+**Step 1:** Register the Service in a Service Provider
+In the AppServiceProvider:
+
+```
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use App\Services\LoggerService;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        $this->app->singleton(LoggerService::class, function ($app) {
+            return new LoggerService();
+        });
+    }
+}
+```
+**Step 2:** Using the Singleton in a Controller
+
+```
+use App\Services\LoggerService;
+
+class SomeController extends Controller
+{
+    protected $logger;
+
+    public function __construct(LoggerService $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    public function logMessage()
+    {
+        $this->logger->log("This is a log message using Laravel's singleton service container.");
+    }
+}
+```
+**Explanation:** By injecting LoggerService in the controller, Laravel provides the single instance managed by the service container.
+Pros and Cons of Singleton Pattern
+**Pros:**
+
+Controlled Access: Ensures only one instance, simplifying resource management.
+Lazy Initialization: Only creates an instance when needed.
+Global Access: Allows centralized access to critical services or resources.
+
+**Cons:**
+
+**Global State:** Can introduce global state, which may make testing and debugging harder.
+**Scalability:** May not suit highly scalable applications, especially in multi-threaded or distributed environments.
+The Singleton pattern is powerful in certain scenarios but should be used with caution, particularly in large applications. Laravel’s Service Container provides a clean and maintainable way to implement this pattern, offering dependency injection and ease of testing.
+
