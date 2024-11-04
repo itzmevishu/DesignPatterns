@@ -143,7 +143,8 @@ class LoggerService
 **Explanation:** The LoggerService class has a private static property $instance that holds the single instance. A getInstance() method creates and returns the instance if it doesn’t already exist.
 
 Step 2: Using the Singleton Class in Laravel
-```
+```php
+<?php
 use App\Services\LoggerService;
 
 class SomeController extends Controller
@@ -161,7 +162,7 @@ Laravel’s Service Container provides an easy way to register a class as a sing
 **Step 1:** Register the Service in a Service Provider
 In the AppServiceProvider:
 
-```
+```php
 <?php
 
 namespace App\Providers;
@@ -181,7 +182,8 @@ class AppServiceProvider extends ServiceProvider
 ```
 **Step 2:** Using the Singleton in a Controller
 
-```
+```php
+<?php
 use App\Services\LoggerService;
 
 class SomeController extends Controller
