@@ -17,6 +17,7 @@ Design patterns are well-established solutions to common problems in software de
 Creational patterns focus on object creation mechanisms, aiming to create objects in a manner suitable to the situation.
 
 - [Singleton](#Singleton-Pattern-in-Laravel): Ensures a class has only one instance and provides a global access point to it.
+- [Simple factory](#Simple-factory-in-Laravel): Ensures a class has only one instance and provides a global access point to it.
 - **Factory Method**: Defines an interface for creating objects, allowing subclasses to alter the type.
 - **Abstract Factory**: Provides an interface for creating families of related or dependent objects.
 - **Builder**: Separates the construction of a complex object from its representation.
@@ -214,4 +215,151 @@ Global Access: Allows centralized access to critical services or resources.
 **Global State:** Can introduce global state, which may make testing and debugging harder.
 **Scalability:** May not suit highly scalable applications, especially in multi-threaded or distributed environments.
 The Singleton pattern is powerful in certain scenarios but should be used with caution, particularly in large applications. Laravel’s Service Container provides a clean and maintainable way to implement this pattern, offering dependency injection and ease of testing.
+
+---
+## Simple Factory in Laravel
+The Simple Factory pattern is useful in situations where you want to centralize and simplify the creation of objects. In Laravel, this can be handy for services like sending notifications through different channels (e.g., Email, SMS, Push Notification). Let's use this example to illustrate how a simple factory might be implemented.
+
+**Scenario:** Notification Service Factory
+Suppose you have an application that needs to send notifications through different channels. Depending on the notification type (email, SMS, or push notification), you want to create different notification service classes.
+
+Instead of directly instantiating these classes wherever they’re needed, a Simple Factory can be used to streamline object creation, making the code more maintainable and scalable.
+
+*Step 1:* Define the Notification Interfaces and Classes
+Define an interface for notifications, and then create classes for each type of notification.
+
+Notification Interface
+```
+<?php
+
+namespace App\Services\Notifications;
+
+interface NotificationService
+{
+    public function send($recipient, $message);
+}
+
+```
+*Email Notification Class*
+```
+<?php
+
+namespace App\Services\Notifications;
+
+class EmailNotification implements NotificationService
+{
+    public function send($recipient, $message)
+    {
+        // Logic to send email notification
+        echo "Sending Email to $recipient: $message";
+    }
+}
+```
+*SMS Notification Class*
+```
+<?php
+
+namespace App\Services\Notifications;
+
+class SmsNotification implements NotificationService
+{
+    public function send($recipient, $message)
+    {
+        // Logic to send SMS notification
+        echo "Sending SMS to $recipient: $message";
+    }
+}
+```
+
+*Push Notification Class*
+
+```
+<?php
+
+namespace App\Services\Notifications;
+
+class PushNotification implements NotificationService
+{
+    public function send($recipient, $message)
+    {
+        // Logic to send push notification
+        echo "Sending Push Notification to $recipient: $message";
+    }
+}
+```
+
+*Step 2:* Create the Simple Factory Class
+The factory class will determine which notification class to instantiate based on a parameter. This centralizes the logic and allows you to add or modify notification types more easily.
+
+```
+<?php
+
+namespace App\Services;
+
+use App\Services\Notifications\EmailNotification;
+use App\Services\Notifications\SmsNotification;
+use App\Services\Notifications\PushNotification;
+use InvalidArgumentException;
+
+class NotificationFactory
+{
+    public static function create(string $type)
+    {
+        return match($type) {
+            'email' => new EmailNotification(),
+            'sms' => new SmsNotification(),
+            'push' => new PushNotification(),
+            default => throw new InvalidArgumentException("Notification type $type is not supported.")
+        };
+    }
+}
+Here, the create method takes in a type string, which decides which notification service to instantiate. If an unsupported type is provided, it throws an exception.
+
+*Step 3:* Using the Factory in a Controller
+In a Laravel controller, you can now use the factory to send notifications without worrying about the specific notification service implementation.
+
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Services\NotificationFactory;
+use Illuminate\Http\Request;
+
+class NotificationController extends Controller
+{
+    public function sendNotification(Request $request)
+    {
+        $type = $request->input('type'); // 'email', 'sms', or 'push'
+        $recipient = $request->input('recipient');
+        $message = $request->input('message');
+
+        try {
+            $notificationService = NotificationFactory::create($type);
+            $notificationService->send($recipient, $message);
+            return response()->json(['status' => 'Notification sent successfully']);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+}
+With this setup:
+
+The controller uses the factory to create the appropriate notification service.
+The logic for creating each service type is centralized in the NotificationFactory class, making it easier to manage and extend.
+
+*Pros and Cons of Simple Factory*
+Pros
+Encapsulation of Object Creation: Centralizes the creation logic, keeping it separate from business logic.
+Code Reusability: Reuse the factory method across various parts of the application, making it more modular.
+Single Responsibility: Keeps the responsibility of instantiation within the factory, helping maintain SRP (Single Responsibility Principle).
+Cons
+Limited Flexibility: If you add many notification types, the factory can become complex, and it may be harder to manage (can lead to many if-else or switch statements).
+Not Extensible for Subclasses: A Simple Factory doesn’t support inheritance or polymorphism as well as more advanced patterns like Factory Method or Abstract Factory.
+Hard to Unit Test: Direct instantiation inside the factory can make it harder to mock or replace classes during testing, unless you use dependency injection.
+Alternative: Dependency Injection in Laravel
+In Laravel, you might often use dependency injection to avoid directly using a factory in the controller. You could bind your services in a Service Provider, allowing Laravel to resolve the dependencies automatically.
+
+This Simple Factory approach is effective for scenarios where you have only a few types to instantiate, and where flexibility is not a primary concern.
+
 
