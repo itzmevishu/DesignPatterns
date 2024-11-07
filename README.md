@@ -18,7 +18,7 @@ Creational patterns focus on object creation mechanisms, aiming to create object
 
 - [Singleton](#Singleton-Pattern): Ensures a class has only one instance and provides a global access point to it.
 - [Simple factory](#Simple-factory): Provides a single class responsible for creating instances of other classes based on input parameters.
-- **Factory Method**: Defines an interface for creating objects, allowing subclasses to alter the type.
+- [Factory Method](#Factory-Method-Pattern): Defines an interface for creating objects, allowing subclasses to alter the type.
 - **Abstract Factory**: Provides an interface for creating families of related or dependent objects.
 - **Builder**: Separates the construction of a complex object from its representation.
 - **Prototype**: Creates new objects by copying an existing object (the prototype).
@@ -376,5 +376,235 @@ The logic for creating each service type is centralized in the NotificationFacto
 In Laravel, you might often use dependency injection to avoid directly using a factory in the controller. You could bind your services in a Service Provider, allowing Laravel to resolve the dependencies automatically.
 
 This Simple Factory approach is effective for scenarios where you have only a few types to instantiate, and where flexibility is not a primary concern.
+---
+
+**Factory Method Pattern**
+The Factory Method Pattern is a creational design pattern that defines an interface for creating objects but allows subclasses to alter the type of object that will be created. This pattern is useful when there is a need to instantiate different classes based on certain conditions while ensuring that the creation logic is encapsulated.
+
+We define a FeedbackChannel interface to provide a uniform way to handle feedback.
+We create different classes for each feedback channel (e.g., SMSFeedback, EmailFeedback, and WebSurveyFeedback).
+We use a Factory Method to determine the appropriate channel class dynamically.
+
+**Scenario: Feedback Channel System**
+A business collects customer feedback through various channels and wants a system to handle each channel’s feedback in a unique way while keeping the creation logic organized.
+
+*Step 1:* Define the FeedbackChannel Interface
+The FeedbackChannel interface defines the common method collectFeedback, which each feedback channel will implement.
+
+```php
+<?php
+
+namespace App\Services\Feedback;
+
+interface FeedbackChannel
+{
+    public function collectFeedback($customerId, $message);
+}
+```
+Step 2: Create Concrete Feedback Channel Classes
+Each feedback channel will implement the FeedbackChannel interface and provide specific logic.
+
+SMS Feedback Channel
+```php
+<?php
+
+namespace App\Services\Feedback;
+
+class SMSFeedback implements FeedbackChannel
+{
+    public function collectFeedback($customerId, $message)
+    {
+        // Logic to send SMS and log feedback
+        echo "Collecting feedback via SMS from Customer $customerId: $message";
+    }
+}
+```
+Email Feedback Channel
+```php
+<?php
+
+namespace App\Services\Feedback;
+
+class EmailFeedback implements FeedbackChannel
+{
+    public function collectFeedback($customerId, $message)
+    {
+        // Logic to send an email and log feedback
+        echo "Collecting feedback via Email from Customer $customerId: $message";
+    }
+}
+```
+Web Survey Feedback Channel
+```php
+<?php
+
+namespace App\Services\Feedback;
+
+class WebSurveyFeedback implements FeedbackChannel
+{
+    public function collectFeedback($customerId, $message)
+    {
+        // Logic to display survey form on web and log feedback
+        echo "Collecting feedback via Web Survey from Customer $customerId: $message";
+    }
+}
+```
+Step 3: Create the FeedbackChannelFactory Class
+In the Factory Method pattern, the factory is an abstract class that can be extended. Each subclass of the factory will instantiate a different feedback channel based on specific criteria.
+
+```php
+<?php
+
+namespace App\Services\Feedback;
+
+use InvalidArgumentException;
+
+abstract class FeedbackChannelFactory
+{
+    // The factory method is abstract and is implemented by subclasses
+    abstract protected function createFeedbackChannel(): FeedbackChannel;
+
+    public function collect($customerId, $message)
+    {
+        // Create the feedback channel
+        $channel = $this->createFeedbackChannel();
+        
+        // Use the feedback channel to collect feedback
+        return $channel->collectFeedback($customerId, $message);
+    }
+}
+```
+
+Step 4: Implement Factory Subclasses for Each Channel
+Each subclass overrides the createFeedbackChannel method to instantiate the specific feedback channel.
+
+SMS Feedback Factory
+```php
+<?php
+
+namespace App\Services\Feedback;
+
+class SMSFeedbackFactory extends FeedbackChannelFactory
+{
+    protected function createFeedbackChannel(): FeedbackChannel
+    {
+        return new SMSFeedback();
+    }
+}
+```
+Email Feedback Factory
+
+```php
+<?php
+
+namespace App\Services\Feedback;
+
+class EmailFeedbackFactory extends FeedbackChannelFactory
+{
+    protected function createFeedbackChannel(): FeedbackChannel
+    {
+        return new EmailFeedback();
+    }
+}
+```
+Web Survey Feedback Factory
+```php
+<?php
+
+namespace App\Services\Feedback;
+
+class WebSurveyFeedbackFactory extends FeedbackChannelFactory
+{
+    protected function createFeedbackChannel(): FeedbackChannel
+    {
+        return new WebSurveyFeedback();
+    }
+}
+```
+Step 5: Using the Factories in a Controller
+Now that we have our factory classes, let’s use them in a Laravel controller to collect feedback from different channels.
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Services\Feedback\SMSFeedbackFactory;
+use App\Services\Feedback\EmailFeedbackFactory;
+use App\Services\Feedback\WebSurveyFeedbackFactory;
+use Illuminate\Http\Request;
+
+class FeedbackController extends Controller
+{
+    public function collectFeedback(Request $request)
+    {
+        $type = $request->input('type'); // 'sms', 'email', or 'web'
+        $customerId = $request->input('customer_id');
+        $message = $request->input('message');
+
+        switch ($type) {
+            case 'sms':
+                $factory = new SMSFeedbackFactory();
+                break;
+            case 'email':
+                $factory = new EmailFeedbackFactory();
+                break;
+            case 'web':
+                $factory = new WebSurveyFeedbackFactory();
+                break;
+            default:
+                return response()->json(['error' => 'Invalid feedback type'], 400);
+        }
+
+        $factory->collect($customerId, $message);
+        return response()->json(['status' => 'Feedback collected successfully']);
+    }
+}
+```
+In this setup:
+
+The controller dynamically chooses the appropriate factory based on the type parameter.
+Each factory then uses its specific feedback channel to collect feedback, ensuring modularity and adherence to the Factory Method pattern.
+
+Pros and Cons of Factory Method Pattern
+Pros
+1. Flexibility: Allows for dynamic creation of objects, making it easy to add new feedback channels without modifying existing code.
+2. Encapsulation: Keeps the instantiation logic separate from business logic, adhering to the Single Responsibility Principle.
+3. Open/Closed Principle: New feedback channels can be added by creating new factory subclasses, without modifying the existing code.
+
+Cons
+1. Complexity: Adds additional classes (factories and products) that may seem like an overhead for simple cases.
+2. Overhead in Simple Use-Cases: The Factory Method pattern may be more complex than needed for cases with few variations.
+
+Conclusion
+The Factory Method pattern is a powerful way to create instances dynamically based on conditions, particularly when dealing with scenarios requiring multiple classes with different behaviors. In this Laravel example, it allows for flexible handling of customer feedback channels, making the code easier to manage and extend. This pattern is especially useful when the number of classes can grow over time, as it allows you to encapsulate creation logic in separate factory classes.
+
+
+The Factory Method Pattern and the Simple Factory Pattern are related but differ in their flexibility and structure. Here’s a quick breakdown of how they differ:
+
+Key Differences
+Responsibility for Object Creation:
+
+Simple Factory Pattern: Centralizes all object creation logic in a single, non-polymorphic class. It provides one factory class with a method (e.g., create()), which handles instantiation based on conditions.
+Factory Method Pattern: Defines an interface for creating objects but leaves the instantiation to subclasses. Each subclass implements its own factory method, providing a more flexible structure for creating objects.
+Polymorphism:
+
+Simple Factory: Does not use polymorphism. All the creation logic is hard-coded within one factory class.
+Factory Method: Uses polymorphism. The base factory class defines an abstract creation method, and each subclass implements it to produce a specific type of object.
+Flexibility:
+
+Simple Factory: Suitable for cases with a limited number of types to be created. Adding new types requires modifying the factory, potentially violating the Open/Closed Principle.
+Factory Method: Provides better extensibility by allowing new subclasses to implement the creation method, supporting Open/Closed Principle.
+When to Use Each
+Simple Factory Pattern: When you have a limited and predictable set of objects to instantiate, and the creation logic does not need to be altered.
+Factory Method Pattern: When the types of objects may vary significantly, or when subclasses need more control over the instantiation process. This pattern is ideal when the instantiation logic might evolve or if you need to adhere to polymorphic behavior.
+In Our Example
+The example provided above for the Customer Feedback system is indeed an example of the Factory Method Pattern because:
+
+Each subclass (e.g., SMSFeedbackFactory, EmailFeedbackFactory) is responsible for instantiating its specific feedback channel.
+We achieve flexibility by letting each factory subclass decide which feedback class to instantiate, making it easier to add or remove channels without changing the existing code.
+In contrast, a Simple Factory Pattern in this context would look like a single FeedbackFactory class with a method that instantiates SMSFeedback, EmailFeedback, or WebSurveyFeedback based on an input parameter, without using separate subclasses for each feedback channel.
+
+This makes the Factory Method Pattern more flexible and extensible but adds complexity, which is suitable here because feedback channels may expand or have unique handling logic in a real-world application like Medallia Concierge.
 
 
