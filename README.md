@@ -17,7 +17,7 @@ Design patterns are well-established solutions to common problems in software de
 Creational patterns focus on object creation mechanisms, aiming to create objects in a manner suitable to the situation.
 
 - [Singleton](#Singleton-Pattern): Ensures a class has only one instance and provides a global access point to it.
-- [Simple factory](#Simple-factory): Ensures a class has only one instance and provides a global access point to it.
+- [Simple factory](#Simple-factory): Provides a single class responsible for creating instances of other classes based on input parameters.
 - **Factory Method**: Defines an interface for creating objects, allowing subclasses to alter the type.
 - **Abstract Factory**: Provides an interface for creating families of related or dependent objects.
 - **Builder**: Separates the construction of a complex object from its representation.
@@ -219,6 +219,9 @@ The Singleton pattern is powerful in certain scenarios but should be used with c
 ---
 ## Simple Factory
 The Simple Factory pattern is useful in situations where you want to centralize and simplify the creation of objects. In Laravel, this can be handy for services like sending notifications through different channels (e.g., Email, SMS, Push Notification). Let's use this example to illustrate how a simple factory might be implemented.
+A Simple Factory is not technically a design pattern but rather a technique to encapsulate object creation. It has a single factory class with a method that returns instances of different classes based on input.
+
+*When to Use:* When you have a straightforward need to instantiate objects based on some condition or input.
 
 **Scenario:** Notification Service Factory
 Suppose you have an application that needs to send notifications through different channels. Depending on the notification type (email, SMS, or push notification), you want to create different notification service classes.
