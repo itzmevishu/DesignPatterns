@@ -358,11 +358,15 @@ The controller uses the factory to create the appropriate notification service.
 The logic for creating each service type is centralized in the NotificationFactory class, making it easier to manage and extend.
 
 *Pros and Cons of Simple Factory*
-Pros
+
+*Pros:*
+
 Encapsulation of Object Creation: Centralizes the creation logic, keeping it separate from business logic.
 Code Reusability: Reuse the factory method across various parts of the application, making it more modular.
 Single Responsibility: Keeps the responsibility of instantiation within the factory, helping maintain SRP (Single Responsibility Principle).
-Cons
+
+*Cons:*
+
 Limited Flexibility: If you add many notification types, the factory can become complex, and it may be harder to manage (can lead to many if-else or switch statements).
 Not Extensible for Subclasses: A Simple Factory doesn’t support inheritance or polymorphism as well as more advanced patterns like Factory Method or Abstract Factory.
 Hard to Unit Test: Direct instantiation inside the factory can make it harder to mock or replace classes during testing, unless you use dependency injection.
