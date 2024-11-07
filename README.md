@@ -361,16 +361,18 @@ The logic for creating each service type is centralized in the NotificationFacto
 
 *Pros:*
 
-Encapsulation of Object Creation: Centralizes the creation logic, keeping it separate from business logic.
-Code Reusability: Reuse the factory method across various parts of the application, making it more modular.
-Single Responsibility: Keeps the responsibility of instantiation within the factory, helping maintain SRP (Single Responsibility Principle).
+1. Encapsulation of Object Creation: Centralizes the creation logic, keeping it separate from business logic.
+2. Code Reusability: Reuse the factory method across various parts of the application, making it more modular.
+3. Single Responsibility: Keeps the responsibility of instantiation within the factory, helping maintain SRP (Single Responsibility Principle).
 
 *Cons:*
 
-Limited Flexibility: If you add many notification types, the factory can become complex, and it may be harder to manage (can lead to many if-else or switch statements).
-Not Extensible for Subclasses: A Simple Factory doesn’t support inheritance or polymorphism as well as more advanced patterns like Factory Method or Abstract Factory.
-Hard to Unit Test: Direct instantiation inside the factory can make it harder to mock or replace classes during testing, unless you use dependency injection.
-Alternative: Dependency Injection in Laravel
+1. Limited Flexibility: If you add many notification types, the factory can become complex, and it may be harder to manage (can lead to many if-else or switch statements).
+2. Not Extensible for Subclasses: A Simple Factory doesn’t support inheritance or polymorphism as well as more advanced patterns like Factory Method or Abstract Factory.
+3. Hard to Unit Test: Direct instantiation inside the factory can make it harder to mock or replace classes during testing, unless you use dependency injection.
+
+*Alternative:* Dependency Injection in Laravel
+
 In Laravel, you might often use dependency injection to avoid directly using a factory in the controller. You could bind your services in a Service Provider, allowing Laravel to resolve the dependencies automatically.
 
 This Simple Factory approach is effective for scenarios where you have only a few types to instantiate, and where flexibility is not a primary concern.
