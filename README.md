@@ -16,8 +16,8 @@ Design patterns are well-established solutions to common problems in software de
 ## 1. Creational Design Patterns
 Creational patterns focus on object creation mechanisms, aiming to create objects in a manner suitable to the situation.
 
-- [Singleton](#Singleton-Pattern-in-Laravel): Ensures a class has only one instance and provides a global access point to it.
-- [Simple factory](#Simple-factory-in-Laravel): Ensures a class has only one instance and provides a global access point to it.
+- [Singleton](#Singleton-Pattern): Ensures a class has only one instance and provides a global access point to it.
+- [Simple factory](#Simple-factory): Ensures a class has only one instance and provides a global access point to it.
 - **Factory Method**: Defines an interface for creating objects, allowing subclasses to alter the type.
 - **Abstract Factory**: Provides an interface for creating families of related or dependent objects.
 - **Builder**: Separates the construction of a complex object from its representation.
@@ -69,7 +69,7 @@ Design patterns serve as blueprints for building flexible, reusable, and reliabl
 
 ---
 
-## Singleton Pattern in Laravel
+## Singleton Pattern
 
 The Singleton pattern is a **creational design pattern** that ensures a class has only one instance and provides a global point of access to that instance. This pattern is useful for resources like logging systems, configuration managers, or database connections, where only a single instance is needed across the application.
 
@@ -217,7 +217,7 @@ Global Access: Allows centralized access to critical services or resources.
 The Singleton pattern is powerful in certain scenarios but should be used with caution, particularly in large applications. Laravel’s Service Container provides a clean and maintainable way to implement this pattern, offering dependency injection and ease of testing.
 
 ---
-## Simple Factory in Laravel
+## Simple Factory
 The Simple Factory pattern is useful in situations where you want to centralize and simplify the creation of objects. In Laravel, this can be handy for services like sending notifications through different channels (e.g., Email, SMS, Push Notification). Let's use this example to illustrate how a simple factory might be implemented.
 
 **Scenario:** Notification Service Factory
@@ -229,7 +229,8 @@ Instead of directly instantiating these classes wherever they’re needed, a Sim
 Define an interface for notifications, and then create classes for each type of notification.
 
 Notification Interface
-```
+
+```php
 <?php
 
 namespace App\Services\Notifications;
@@ -238,10 +239,10 @@ interface NotificationService
 {
     public function send($recipient, $message);
 }
-
+?>
 ```
 *Email Notification Class*
-```
+```php
 <?php
 
 namespace App\Services\Notifications;
@@ -254,9 +255,10 @@ class EmailNotification implements NotificationService
         echo "Sending Email to $recipient: $message";
     }
 }
+?>
 ```
 *SMS Notification Class*
-```
+```php
 <?php
 
 namespace App\Services\Notifications;
@@ -269,11 +271,12 @@ class SmsNotification implements NotificationService
         echo "Sending SMS to $recipient: $message";
     }
 }
+?>
 ```
 
 *Push Notification Class*
 
-```
+```php
 <?php
 
 namespace App\Services\Notifications;
@@ -286,12 +289,13 @@ class PushNotification implements NotificationService
         echo "Sending Push Notification to $recipient: $message";
     }
 }
+?>
 ```
 
 *Step 2:* Create the Simple Factory Class
 The factory class will determine which notification class to instantiate based on a parameter. This centralizes the logic and allows you to add or modify notification types more easily.
 
-```
+```php
 <?php
 
 namespace App\Services;
@@ -318,7 +322,7 @@ Here, the create method takes in a type string, which decides which notification
 *Step 3:* Using the Factory in a Controller
 In a Laravel controller, you can now use the factory to send notifications without worrying about the specific notification service implementation.
 
-```
+```php
 <?php
 
 namespace App\Http\Controllers;
