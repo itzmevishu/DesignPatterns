@@ -317,6 +317,7 @@ class NotificationFactory
         };
     }
 }
+```
 Here, the create method takes in a type string, which decides which notification service to instantiate. If an unsupported type is provided, it throws an exception.
 
 *Step 3:* Using the Factory in a Controller
