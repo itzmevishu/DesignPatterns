@@ -351,7 +351,8 @@ class NotificationController extends Controller
         }
     }
 }
-With this setup:
+```
+*With this setup:*
 
 The controller uses the factory to create the appropriate notification service.
 The logic for creating each service type is centralized in the NotificationFactory class, making it easier to manage and extend.
