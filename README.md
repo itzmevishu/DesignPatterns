@@ -606,6 +606,6 @@ Each subclass (e.g., SMSFeedbackFactory, EmailFeedbackFactory) is responsible fo
 We achieve flexibility by letting each factory subclass decide which feedback class to instantiate, making it easier to add or remove channels without changing the existing code.
 In contrast, a Simple Factory Pattern in this context would look like a single FeedbackFactory class with a method that instantiates SMSFeedback, EmailFeedback, or WebSurveyFeedback based on an input parameter, without using separate subclasses for each feedback channel.
 
-This makes the Factory Method Pattern more flexible and extensible but adds complexity, which is suitable here because feedback channels may expand or have unique handling logic in a real-world application like Medallia Concierge.
+This makes the Factory Method Pattern more flexible and extensible but adds complexity, which is suitable here because feedback channels may expand or have unique handling logic.
 
 
