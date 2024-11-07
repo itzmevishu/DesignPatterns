@@ -86,9 +86,9 @@ The Singleton pattern is a **creational design pattern** that ensures a class ha
 
 ---
 
-## Singleton Pattern Implementation in Laravel
+## Singleton Pattern Implementation
 
-### Method 1: Manual Implementation of Singleton in Laravel
+### Method 1: Manual Implementation of Singleton
 
 This example demonstrates creating a Singleton class for a Logger service.
 
@@ -217,7 +217,7 @@ Global Access: Allows centralized access to critical services or resources.
 The Singleton pattern is powerful in certain scenarios but should be used with caution, particularly in large applications. Laravel’s Service Container provides a clean and maintainable way to implement this pattern, offering dependency injection and ease of testing.
 
 ---
-## Simple Factory
+## Simple Factory Pattern
 The Simple Factory pattern is useful in situations where you want to centralize and simplify the creation of objects. In Laravel, this can be handy for services like sending notifications through different channels (e.g., Email, SMS, Push Notification). Let's use this example to illustrate how a simple factory might be implemented.
 A Simple Factory is not technically a design pattern but rather a technique to encapsulate object creation. It has a single factory class with a method that returns instances of different classes based on input.
 
